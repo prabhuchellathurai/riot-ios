@@ -63,6 +63,7 @@ enum
     SETTINGS_SECTION_OTHER_INDEX,
     SETTINGS_SECTION_LABS_INDEX,
     SETTINGS_SECTION_CRYPTOGRAPHY_INDEX,
+    SETTINGS_SECTION_CROSSSIGNING_INDEX,  // TODO: To remove. For dev only
     SETTINGS_SECTION_KEYBACKUP_INDEX,
     SETTINGS_SECTION_DEVICES_INDEX,
     SETTINGS_SECTION_FLAIR_INDEX,
@@ -148,6 +149,13 @@ enum {
     CRYPTOGRAPHY_BLACKLIST_UNVERIFIED_DEVICES_INDEX,
     CRYPTOGRAPHY_EXPORT_INDEX,
     CRYPTOGRAPHY_COUNT
+};
+
+// TODO: To remove. For dev only
+enum {
+    CROSSSIGNING_INFO_INDEX = 0,
+    CROSSSIGNING_BOOTSTRAP_INDEX,
+    CROSSSIGNING_COUNT
 };
 
 enum
@@ -1048,6 +1056,38 @@ SettingsIdentityServerCoordinatorBridgePresenterDelegate>
     return cryptoInformationString;
 }
 
+// TODO: To remove
+- (NSAttributedString*)crossSigningStatus
+{
+    MXKAccount* account = [MXKAccountManager sharedManager].activeAccounts.firstObject;
+    MXCrossSigning *crossSigning = account.mxSession.crypto.crossSigning;
+    MXCrossSigningInfo *myUserCrossSigningKeys = crossSigning.myUserCrossSigningKeys;
+
+    // Crypto information
+    NSMutableAttributedString *cryptoInformationString = [NSMutableAttributedString new];
+
+
+    NSString *crossSigningEnabled = [NSString stringWithFormat:@"Cross-signing is %@.\n",
+                                     crossSigning.isBootstrapped ? @"enabled" :
+                                     myUserCrossSigningKeys ? @"enabled in read-only" : @"disabled"];
+
+    [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
+                                                     initWithString:crossSigningEnabled
+                                                     attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.textPrimaryColor,
+                                                                  NSFontAttributeName: [UIFont systemFontOfSize:17]}]];
+
+
+    NSString *crossSigningKeysTrust = [NSString stringWithFormat:@"Keys are %@.\n",
+                                     myUserCrossSigningKeys.trustLevel.isVerified ? @"trusted" : @"not trusted"];
+
+    [cryptoInformationString appendAttributedString:[[NSMutableAttributedString alloc]
+                                                     initWithString:crossSigningKeysTrust
+                                                     attributes:@{NSForegroundColorAttributeName : ThemeService.shared.theme.textPrimaryColor,
+                                                                  NSFontAttributeName: [UIFont systemFontOfSize:17]}]];
+
+    return cryptoInformationString;
+}
+
 - (void)loadDevices
 {
     // Refresh the account devices list
@@ -1473,6 +1513,10 @@ SettingsIdentityServerCoordinatorBridgePresenterDelegate>
         {
             count = CRYPTOGRAPHY_COUNT;
         }
+    }
+    else if (section == SETTINGS_SECTION_CROSSSIGNING_INDEX)
+    {
+        count = CROSSSIGNING_COUNT;
     }
     else if (section == SETTINGS_SECTION_KEYBACKUP_INDEX)
     {
@@ -2585,6 +2629,40 @@ SettingsIdentityServerCoordinatorBridgePresenterDelegate>
             cell = exportKeysBtnCell;
         }
     }
+    else if (section == SETTINGS_SECTION_CROSSSIGNING_INDEX)
+    {
+        if (row == CROSSSIGNING_INFO_INDEX)
+        {
+            MXKTableViewCellWithTextView *cryptoCell = [self textViewCellForTableView:tableView atIndexPath:indexPath];
+
+            cryptoCell.mxkTextView.attributedText = [self crossSigningStatus];
+
+            cell = cryptoCell;
+        }
+        else if (row == CROSSSIGNING_BOOTSTRAP_INDEX)
+        {
+            MXKTableViewCellWithButton *exportKeysBtnCell = [tableView dequeueReusableCellWithIdentifier:[MXKTableViewCellWithButton defaultReuseIdentifier]];
+            if (!exportKeysBtnCell)
+            {
+                exportKeysBtnCell = [[MXKTableViewCellWithButton alloc] init];
+            }
+
+            NSString *btnTitle = @"Bootstrap cross-signing";
+            [exportKeysBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateNormal];
+            [exportKeysBtnCell.mxkButton setTitle:btnTitle forState:UIControlStateHighlighted];
+            [exportKeysBtnCell.mxkButton setTintColor:ThemeService.shared.theme.tintColor];
+            exportKeysBtnCell.mxkButton.titleLabel.font = [UIFont systemFontOfSize:17];
+
+            [exportKeysBtnCell.mxkButton removeTarget:self action:nil forControlEvents:UIControlEventTouchUpInside];
+            //[exportKeysBtnCell.mxkButton addTarget:self action:@selector(bootstrapCrossSigning:) forControlEvents:UIControlEventTouchUpInside];
+            exportKeysBtnCell.mxkButton.accessibilityIdentifier = nil;
+
+            MXCrossSigning *crossSigning = account.mxSession.crypto.crossSigning;
+            exportKeysBtnCell.mxkButton.enabled = NO; //!crossSigning.myUserCrossSigningKeys;
+
+            cell = exportKeysBtnCell;
+        }
+    }
     else if (section == SETTINGS_SECTION_KEYBACKUP_INDEX)
     {
         cell = [keyBackupSection cellForRowAtRow:row];
@@ -2700,6 +2778,10 @@ SettingsIdentityServerCoordinatorBridgePresenterDelegate>
         {
             return NSLocalizedStringFromTable(@"settings_cryptography", @"Vector", nil);
         }
+    }
+    else if (section == SETTINGS_SECTION_CROSSSIGNING_INDEX)
+    {
+        return @"CROSS-SIGNING";
     }
     else if (section == SETTINGS_SECTION_KEYBACKUP_INDEX)
     {
