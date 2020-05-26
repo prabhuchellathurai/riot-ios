@@ -13,11 +13,11 @@
 	<key>pushKitAppIdDev</key>
 	<string>im.vector.app.ios.voip.dev</string>
 	<key>identityserverurl</key>
-	<string>https://vector.im</string>
+	<string></string>
 	<key>homeserverurl</key>
-	<string>https://matrix.org</string>
+	<string>https://communication.tringbytes.com</string>
 	<key>homeserver</key>
-	<string>matrix.org</string>
+	<string>communication.tringbytes</string>
 	<key>webAppUrlDev</key>
 	<string>https://riot.im/develop</string>
 	<key>webAppUrlBeta</key>
@@ -31,7 +31,7 @@
 	<key>integrationsRestUrl</key>
 	<string>https://scalar.vector.im/api</string>
 	<key>jitsiServerURL</key>
-	<string>https://jitsi.riot.im</string>
+	<string>https://letscall.tringbytes.com/</string>
 	<key>integrationsWidgetsUrls</key>
 	<array>
 		<string>https://scalar.vector.im/_matrix/integrations/v1</string>
