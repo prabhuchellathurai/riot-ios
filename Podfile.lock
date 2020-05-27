@@ -111,8 +111,8 @@ DEPENDENCIES:
   - MatomoTracker (~> 7.2.0)
   - MatrixKit (= 0.12.6)
   - MatrixKit/AppExtension (= 0.12.6)
-  - MatrixSDK/JingleCallStack
-  - MatrixSDK/SwiftSupport
+  - MatrixSDK/JingleCallStack (from `https://github.com/prabhuchellathurai/matrix-ios-sdk.git`, branch `feature/tring`)
+  - MatrixSDK/SwiftSupport (from `https://github.com/prabhuchellathurai/matrix-ios-sdk.git`, branch `feature/tring`)
   - OLMKit
   - Reusable (~> 4.1)
   - SwiftGen (~> 6.1)
@@ -136,7 +136,6 @@ SPEC REPOS:
     - libPhoneNumber-iOS
     - MatomoTracker
     - MatrixKit
-    - MatrixSDK
     - OLMKit
     - Realm
     - Reusable
@@ -144,6 +143,16 @@ SPEC REPOS:
     - SwiftLint
     - zxcvbn-ios
     - ZXingObjC
+
+EXTERNAL SOURCES:
+  MatrixSDK:
+    :branch: feature/tring
+    :git: https://github.com/prabhuchellathurai/matrix-ios-sdk.git
+
+CHECKOUT OPTIONS:
+  MatrixSDK:
+    :commit: 523d3bcc79e840e2fb84df3d9034a0d027ef2fb9
+    :git: https://github.com/prabhuchellathurai/matrix-ios-sdk.git
 
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
@@ -169,6 +178,6 @@ SPEC CHECKSUMS:
   zxcvbn-ios: fef98b7c80f1512ff0eec47ac1fa399fc00f7e3c
   ZXingObjC: fdbb269f25dd2032da343e06f10224d62f537bdb
 
-PODFILE CHECKSUM: 6589119129fac9d854db2842066a4e7c66c880c7
+PODFILE CHECKSUM: 63556f95a35c724a41608b34266abbe5f93bb58c
 
 COCOAPODS: 1.8.4
